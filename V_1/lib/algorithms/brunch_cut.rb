@@ -5,42 +5,37 @@ class BrunchAndCut
     @infinity = -1_000_000_000 
   end
 
+  def calc_cost_for_line_and_column(item)
+    @min_limit = 0 || @min_limit
+    min = item.sort[1]
+    @min_limit = @min_limit + min
+    @new_item = []
+    item.each do |el|
+      new_el = el - min
+      if new_el < 0 
+        new_el = @infinity
+      end
+      @new_item << new_el
+    end
+  end
+
   def find_solution
     #for lines
-    min_limit = 0
     new_line_matrix = []
     new_matrix = []
     @distance_matrix.each do |line|
-      min = line.sort[1]
-      min_limit = min_limit + min
-      new_line = []
-      line.each do |el|
-        new_el = el - min
-        if new_el < 0 
-          new_el = @infinity
-        end
-        new_line << new_el
-      end
-      new_line_matrix << new_line
-      min_limit
+      calc_cost_for_line_and_column(line)
+      new_line_matrix << @new_item
+      @min_limit
     end
 
     #for columns
     new_line_matrix.transpose.each do |column|
-      min = column.sort[1]
-      min_limit = min_limit + min
-      new_column = []
-      column.each do |el|
-        new_el = el - min
-        if new_el < 0 
-          new_el = @infinity
-        end
-        new_column << new_el
-      end
-      new_matrix << new_column
+      calc_cost_for_line_and_column(column)
+      new_matrix << @new_item
     end
     modified_matrix = new_matrix.transpose
-    min_limit
+    @min_limit
 
     #stage 2(main) fines count
     all_fines = []
