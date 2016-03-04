@@ -56,7 +56,13 @@ class BrunchAndCut
         end
       end
     end
+    debugger
     element_with_max_fines = all_fines.max_by {|fine| fine[:fines] }
+    #обработка с учетом нуля с максимальным штрафов
+    # without top
+    way = element_with_max_fines[:fines] + min_limit
+    # with top
+
   end
 
 end
