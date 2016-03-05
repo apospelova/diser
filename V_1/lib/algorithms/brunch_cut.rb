@@ -6,7 +6,7 @@ class BrunchAndCut
   end
 
   def calc_cost_for_line_and_column(item)
-    @min_limit = 0 || @min_limit
+    @min_limit = @min_limit || 0
     min = item.sort[1]
     @min_limit = @min_limit + min
     @new_item = []
@@ -17,6 +17,10 @@ class BrunchAndCut
       end
       @new_item << new_el
     end
+  end
+
+  def stage_2
+    
   end
 
   def find_solution
@@ -52,6 +56,15 @@ class BrunchAndCut
       end
     end
     element_with_max_fines = all_fines.max_by {|fine| fine[:fines] }
+    #without top
+    cost_of_path_without = element_with_max_fines[:fines] + @min_limit
+    #with top
+    old_modified_matrix = modified_matrix
+    modified_matrix.delete(modified_matrix[element_with_max_fines[:position][0]])
+    tranpose_matrix_without_line = modified_matrix.transpose
+    tranpose_matrix_without_line.delete(tranpose_matrix_without_line[element_with_max_fines[:position][1]])
+    tranpose_matrix_without_line.transpose
+
   end
 
 end
