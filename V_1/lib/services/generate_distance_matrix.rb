@@ -10,7 +10,11 @@ class GenerateDistanceMatrixService
     (0...lines).each do |l|
       @distance_matrix[l] = []
       (0...columns).each do |c|
-        @distance_matrix[l] << (Math.sqrt((@customers[l].x - @customers[c].x)**2 + (@customers[l].y - @customers[c].y)**2))
+        value = (Math.sqrt((@customers[l].x - @customers[c].x)**2 + (@customers[l].y - @customers[c].y)**2))
+        if l == c && value == 0 
+          value = 1_000_000_000
+        end
+        @distance_matrix[l] << Element.new(l, c, value)
       end
     end
   end
