@@ -1,10 +1,9 @@
 class BrunchAndCut
-  INFINITY = 1_000_000_000
 
   def initialize()
     @min_limit = 0
-    @in_solution = []
-    @no_solution = []
+    @in_solution = {}
+    @no_solution = {}
   end
 
   def calc_cost_for_line_and_column(item)
@@ -19,13 +18,20 @@ class BrunchAndCut
     new_item
   end
 
-  def check_nonhamilron(collection, limit)
-    debugger
-    set of vertices = []
-    collection.each do |edge|
-      edge.each do |vertex|
-        debugger
-        set of vertices << vertex
+  def check_nonhamilron(collection, matrix)
+    #sort collection
+    @copy_collection = collection
+    collection.each do |start_ver, finish_ver|
+      @copy_collection.each do |copy_start, copy_finish|
+        if finish_ver == copy_start
+          matrix.find do |line|
+            line.each do |el| 
+              if el.line_num == copy_finish && el.column_num == start_ver 
+                el.value = INFINITY
+              end
+            end
+          end
+        end
       end
     end
   end
@@ -46,6 +52,7 @@ class BrunchAndCut
 
   def find_solution(current_distance_matrix)
     @modified_matrix = stage_2(current_distance_matrix)
+    debugger
     #stage 2(main) fines count
     all_fines = []
     @modified_matrix.each_with_index do |line, line_num|
@@ -53,12 +60,12 @@ class BrunchAndCut
         if el.value == 0 
           el_with_fines = {}
           min_by_line = line.sort_by(&:value)[1]
-          if min_by_line.value > 900000000
-            min_by_line.value = 0
+          if min_by_line.value == INFINITY
+            min_by_line = el
           end
           min_by_column = @new_matrix[column_num].sort_by(&:value)[1]
-          if min_by_column.value > 900000000
-            min_by_column.value = 0
+          if min_by_column.value == INFINITY
+            min_by_column = el
           end
           fines = min_by_line.value + min_by_column.value
           el_with_fines = {fines: fines, position: [line_num, column_num], default_position: [el.line_num, el.column_num]}
@@ -66,15 +73,16 @@ class BrunchAndCut
         end
       end
     end
+    debugger
     element_with_max_fines = all_fines.max_by {|fine| fine[:fines] }
-    pos_line = element_with_max_fines[:position][0]
-    pos_column = element_with_max_fines[:position][1]
+    pos_line = element_with_max_fines[:default_position][0]
+    pos_column = element_with_max_fines[:default_position][1]
     #without top
     cost_of_path_without = element_with_max_fines[:fines] + @min_limit
     modified_matrix_without = @modified_matrix
-    modified_matrix_without[pos_line][pos_column].value = INFINITY
+    Distance_matrix[pos_line][pos_column].value = INFINITY
     #with top
-    @modified_matrix[pos_column][pos_line].value = INFINITY
+    Distance_matrix[pos_column][pos_line].value = INFINITY
     @modified_matrix.delete(@modified_matrix[pos_line])
     tranpose_matrix_without_line = @modified_matrix.transpose
     tranpose_matrix_without_line.delete(tranpose_matrix_without_line[pos_column])
@@ -83,14 +91,18 @@ class BrunchAndCut
     @min_limit = 0
     stage_2(new_matrix_without_elements)
     cost_of_path_with = common_limit + @min_limit
+    start = element_with_max_fines[:default_position][0]
+    finish = element_with_max_fines[:default_position][1]
     if cost_of_path_with > cost_of_path_without
       @modified_matrix = modified_matrix_without
       @min_limit = cost_of_path_without
-      @no_solution << element_with_max_fines[:default_position]
+      @no_solution[start] = finish
     else 
       @min_limit = common_limit
-      @in_solution << element_with_max_fines[:default_position]
-      check_nonhamilron(@in_solution, $start_matrix_dimension)
+      @in_solution[start] = finish
+      if @in_solution.count > 1
+        check_nonhamilron(@in_solution, new_matrix_without_elements)
+      end
       @modified_matrix = new_matrix_without_elements
     end
     if @modified_matrix.count > 1
