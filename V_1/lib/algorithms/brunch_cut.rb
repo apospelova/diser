@@ -9,7 +9,7 @@ class BrunchAndCut
   def find_minimal(item, el)
     copy_item = item.clone
     copy_item.delete(el)
-    minimal = copy_item.min_by{|k, v| v}[1]
+    minimal = copy_item.min_by{|k, v| v[:distance]}[1][:distance]
     if minimal == INFINITY
       minimal = el
     end
@@ -17,12 +17,12 @@ class BrunchAndCut
   end
 
   def calc_cost_for_line_and_column(item)
-    min = item.min_by{|k, v| v}[1]
+    min = item.min_by{|k, v| v[:distance]}[1][:distance]
     @min_limit = @min_limit + min
     new_item = []
     item.each do |el|
-      new_value = el[1] - min
-      el[1] = new_value
+      new_value = el[1][:distance] - min
+      el[1][:distance] = new_value
       new_item << el
     end
     new_item.to_h
@@ -34,7 +34,7 @@ class BrunchAndCut
     collection.each do |start_ver, finish_ver|
       copy_collection.each do |copy_start, copy_finish|
         if finish_ver == copy_start && matrix[copy_finish] != nil && matrix[copy_finish][start_ver] != nil
-          matrix[copy_finish][start_ver] = INFINITY
+          matrix[copy_finish][start_ver][:distance] = INFINITY
         end
       end
     end
@@ -52,7 +52,7 @@ class BrunchAndCut
               next
             end
             if res.last == res.first
-              matrix[line_num][column_num] = INFINITY
+              matrix[line_num][column_num][:distance] = INFINITY
               break
             end
             i += 1
@@ -63,13 +63,13 @@ class BrunchAndCut
   end
 
   def find_best_zero(line, pos_line, el, pos_column)
-    if el == 0 
+    if el[:distance] == 0 
       el_with_fines = {}
       min_by_line = find_minimal(line, pos_column)
       #for column
       value_in_column = {}
       @modified_matrix.each do |key, line|
-        value = line[pos_column]
+        value = line[pos_column][:distance]
         value_in_column[key] = value 
       end
       value_in_column.delete(pos_line)
@@ -96,13 +96,13 @@ class BrunchAndCut
     column_nums.each do |column_num|
       value_in_column = []
       new_line_matrix.each do |key, line|
-        value = line[column_num]
+        value = line[column_num][:distance]
         value_in_column << value 
       end
       @min_in_column = value_in_column.min
       @min_limit += @min_in_column
       new_line_matrix.each do |key, line|
-        line[column_num] -= @min_in_column
+        line[column_num][:distance] -= @min_in_column
       end
     end
     new_line_matrix
@@ -111,7 +111,7 @@ class BrunchAndCut
   def solution_with_edge()
     @modified_matrix_with = Marshal.load(Marshal.dump(@modified_matrix))
     if @modified_matrix_with[@pos_column] != nil && @modified_matrix_with[@pos_column][@pos_line] != nil
-      @modified_matrix_with[@pos_column][@pos_line] = INFINITY
+      @modified_matrix_with[@pos_column][@pos_line][:distance] = INFINITY
     end
     @modified_matrix_with.delete(@pos_line)
     @modified_matrix_with.each do |line_num, line|
@@ -139,12 +139,13 @@ class BrunchAndCut
   end
 
   def find_solution(current_distance_matrix)
+
     @modified_matrix = stage_2(current_distance_matrix)
     #stage 2(main) fines count
     @all_fines = []
     @modified_matrix.each do |line_num, line|
       line.each do |column_num, el|
-          find_best_zero(line, line_num, el, column_num)
+        find_best_zero(line, line_num, el, column_num)
       end
     end
     element_with_max_fines = @all_fines.max_by {|fine| fine[:fines] }
@@ -153,7 +154,7 @@ class BrunchAndCut
     #without top
     @cost_of_path_without = element_with_max_fines[:fines] + @min_limit
     @modified_matrix_without = Marshal.load(Marshal.dump(@modified_matrix))
-    @modified_matrix_without[@pos_line][@pos_column] = INFINITY
+    @modified_matrix_without[@pos_line][@pos_column][:distance] = INFINITY
     #with top
     @cost_of_path_with = solution_with_edge()
     select_optimal_way()
