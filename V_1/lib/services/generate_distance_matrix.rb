@@ -15,7 +15,7 @@ class GenerateDistanceMatrixService
         if l == c && value == 0 
           value = INFINITY
         end
-        @distance_matrix[l][c] = {distance: value, from: @customers[c].time1, to: @customers[c].time2, service_time: @customers[c].service_time}
+        @distance_matrix[l][c] = {distance: value, from: @customers[c].time1, to: @customers[c].time2, middle_time: (@customers[c].time1 + @customers[c].time2)/2, service_time: @customers[c].service_time}
       end
     end
   end

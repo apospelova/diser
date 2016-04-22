@@ -15,6 +15,7 @@ test_matrix = { 0=>{0=>INFINITY, 1=>83, 2=>77, 3=>14, 4=>26},
                 3=>{0=>81, 1=>61, 2=>32, 3=>INFINITY, 4=>17}, 
                 4=>{0=>63, 1=>71, 2=>88, 3=>79, 4=>INFINITY}}
 Size_start_matrix = Distance_matrix.size
+prepare_path = PreparatoryPathService.new(@customers, Distance_matrix)
 brunch_cut = BrunchAndCut.new()
 @solution = brunch_cut.find_solution(Distance_matrix)
 

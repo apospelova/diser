@@ -10,8 +10,13 @@ class CustomerParserService
       result = []
       CSV.foreach(@file_name) do |(id, x, y, demand, time1, time2, service_time)|
         result << Customer.new(
-          id: id, x: x, y: y, demand: demand,
-          time1: time1, time2: time2, service_time: service_time)
+          id: id, 
+          x: x, 
+          y: y, 
+          demand: demand,
+          time1: time1, 
+          time2: time2, 
+          service_time: service_time)
       end
       result
     end
