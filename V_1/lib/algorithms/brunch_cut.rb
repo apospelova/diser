@@ -1,6 +1,9 @@
 class BrunchAndCut
 
-  def initialize()
+  def initialize(distance_matrix, customers)
+    @customers = customers
+    @source_matrix = distance_matrix
+    @preparatory_path_service = PreparatoryPathService.new(@customers, @source_matrix)
     @min_limit = 0
     @in_solution = {}
     @no_solution = {}
@@ -131,6 +134,8 @@ class BrunchAndCut
     else 
       @min_limit = @common_limit
       @in_solution[@pos_line] = @pos_column
+      @result = @preparatory_path_service.calc_path_and_possible(@in_solution, @customers, @source_matrix)
+      puts(@result)
       if @in_solution.count > 1
         check_nonhamilton(@in_solution, @modified_matrix_with)
       end
@@ -158,6 +163,7 @@ class BrunchAndCut
     #with top
     @cost_of_path_with = solution_with_edge()
     select_optimal_way()
+
     if @modified_matrix.count > 1
       find_solution(@modified_matrix)
     else
