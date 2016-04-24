@@ -13,7 +13,8 @@ class PreparatoryPathService
 		ids_end = list_sort_by_end.map(&:id)
 		path = check_path(ids_from, ids_end)
 		longest_sequence = find_longest_sequence(path)
-		possible_path_array = calc_path_and_possible(longest_sequence, customers, distance_matrix )
+		debugger
+		possible_path_array = calc_path_and_possible(longest_sequence, customers, distance_matrix)
 		modified_path = modified_path(possible_path_array)
 		modified_matrix = modified_matrix(modified_path, distance_matrix)
 		new_matrix = brunch_cut.check_nonhamilton(modified_path, modified_matrix)
@@ -39,46 +40,46 @@ class PreparatoryPathService
 	def calc_path_and_possible(longest_sequence, customers, distance_matrix)
 		current_time = 0
 		way_array = []
-		way = {}
-		result = 0
+		way = []
 		common_delay_time = 0
-		longest_sequence.each do |start_ver, finish_ver|
-			customers.each do |customer|
-				if start_ver + 1 == customer.id
-					debugger
-					if current_time == 0 
-						current_time = customer.time1 + customer.service_time
-					else
-						current_time = current_time +customer.service_time
-					end
-					next_vertex = distance_matrix[start_ver][finish_ver]
-					if !next_vertex.nil?
-						on_way = next_vertex[:distance] 
-						until_next_vertex = current_time + on_way
-						if next_vertex[:to] > until_next_vertex
-							delay_time = next_vertex[:from] - until_next_vertex
-							way_array << start_ver
-							way[start_ver] = finish_ver
-							if delay_time < 0 
-								current_time = until_next_vertex
-							else
-								current_time = next_vertex[:from]
-								common_delay_time += delay_time
-							end
-						else 
-							way_array << start_ver
-							puts("Not possible")
-							puts(common_delay_time)
-							puts(way_array.to_s)
+		longest_sequence.each_with_index do |vertex, index|
+			if index != longest_sequence.length - 1
+				customers.each do |customer|
+					if vertex == customer.id
+						debugger if vertex == 2
+						if current_time == 0 
+							current_time = customer.time1 + customer.service_time
+						else
+							current_time = current_time +customer.service_time
 						end
-						common_delay_time
+						next_vertex = distance_matrix[vertex-1][longest_sequence[index+1]-1]
+						if !next_vertex.nil?
+							on_way = next_vertex[:distance] 
+							until_next_vertex = current_time + on_way
+							if next_vertex[:to] > until_next_vertex
+								delay_time = next_vertex[:from] - until_next_vertex
+								way << vertex - 1
+								if delay_time < 0 
+									current_time = until_next_vertex
+								else
+									current_time = next_vertex[:from]
+									common_delay_time += delay_time
+								end
+							else 
+								way << vertex - 1 
+								puts("Not possible")
+								puts(common_delay_time)
+								puts(way.to_s)
+							end
+							common_delay_time
+						end
 					end
+					current_time
 				end
-				current_time
 			end
 		end
-		puts(way)
-		way_array
+		puts(way.to_s)
+		way
 	end
 
 	def check_path(from_path, end_path)
@@ -113,7 +114,7 @@ class PreparatoryPathService
 				longest_sequence[el-1] = longest_way[index + 1]-1
 			end
 		end
-		longest_sequence
+		longest_way
 	end
 
 end
