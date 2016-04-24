@@ -7,15 +7,20 @@ class GenerateDistanceMatrixService
     @distance_matrix = {} 
     lines = @count
     columns = @count
-    (0...lines).each do |l|
+    (0...lines).each do |line|
       @distance_matrix[l] = {}
-      (0...columns).each do |c|
-        @distance_matrix[l][c] = {}
-        value = (Math.sqrt((@customers[l].x - @customers[c].x)**2 + (@customers[l].y - @customers[c].y)**2))
-        if l == c && value == 0 
+      (0...columns).each do |column|
+        from_customer = @customers[line]
+        to_customer = @customers[column]
+        store = @distance_matrix[from_customer.id][to_customer.id] = {}
+        value = (Math.sqrt((from_customer.x - to_customer.x)**2 + (from_customer.y - to_customer.y)**2))
+        if from_customer.id == to_customer.id 
           value = INFINITY
         end
-        @distance_matrix[l][c] = {distance: value, from: @customers[c].time1, to: @customers[c].time2, middle_time: (@customers[c].time1 + @customers[c].time2)/2, service_time: @customers[c].service_time}
+        store.merge(
+          distance: value,
+          from_customer: from_customer,
+          to_customer: to_customer)
       end
     end
   end

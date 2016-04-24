@@ -134,7 +134,19 @@ class BrunchAndCut
     else 
       @min_limit = @common_limit
       @in_solution[@pos_line] = @pos_column
-      @result = @preparatory_path_service.calc_path_and_possible(@in_solution, @customers, @source_matrix)
+      copy_solution = Marshal.load(Marshal.dump(@in_solution))
+      in_solution_array = {}
+      @in_solution.each do |start_ver, finish_ver|
+        copy_solution.each do |copy_start, copy_finish|
+          if finish_ver == copy_start
+            in_solution_array[start_ver] = [start_ver, copy_start, copy_finish]
+          end
+        end
+        in_solution_array
+      end
+      in_solution_array.each do |key, value|
+        @result = @preparatory_path_service.calc_path_and_possible(value, @customers, @source_matrix)
+      end
       puts(@result)
       if @in_solution.count > 1
         check_nonhamilton(@in_solution, @modified_matrix_with)
