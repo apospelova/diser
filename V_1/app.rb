@@ -18,7 +18,6 @@ prapare_path = PreparatoryPathService.new(@customers, Distance_matrix)
 prepare_matrix = prapare_path.find_new_matrix(@customers, Distance_matrix)
 brunch_cut = BrunchAndCut.new(prepare_matrix, @customers)
 @solution = brunch_cut.find_solution(prepare_matrix)
-
 @res = [@solution.first.first]
 loop do
   @res << @solution[@res.last]

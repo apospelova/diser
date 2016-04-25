@@ -2,7 +2,7 @@ class BrunchAndCut
 
   def initialize(distance_matrix, customers)
     @customers = customers
-    @source_matrix = distance_matrix
+    @source_matrix = Marshal.load(Marshal.dump(distance_matrix))
     @preparatory_path_service = PreparatoryPathService.new(@customers, @source_matrix)
     @min_limit = 0
     @in_solution = {}
@@ -126,6 +126,35 @@ class BrunchAndCut
     @cost_of_path_with = @common_limit + @min_limit
   end
 
+  def solution_obj_to_array(in_solution)
+    in_solution_array = []
+    copy_solution = Marshal.load(Marshal.dump(in_solution))
+    vertexes = copy_solution.keys
+    start = copy_solution.keys.first
+    puts "@" * 100
+    puts "in_solution = #{in_solution}"
+    puts "in_solution_array  = #{in_solution_array}"
+    current_post = start
+    in_solution_array = {}
+    in_solution_array[start] = []
+    in_solution_array[start] << start
+    copy_solution.each do |key, value|
+      puts "copy_solution[current_post] = #{copy_solution[current_post]}; current_post = #{current_post}"
+      current_post = copy_solution[current_post]
+      if !in_solution_array.include?(current_post)
+        in_solution_array[start] << current_post
+        vertexes.delete(current_post)
+      end
+    end
+    if !vertexes.nil?
+      start = vertexes[0]
+    end
+    in_solution_array.each do |key, value|
+      @result = @preparatory_path_service.calc_path_and_possible(value, @customers, @source_matrix)
+      puts(@result)
+    end
+  end
+
   def select_optimal_way()
     if @cost_of_path_with > @cost_of_path_without
       @min_limit = @cost_of_path_without
@@ -134,24 +163,11 @@ class BrunchAndCut
     else 
       @min_limit = @common_limit
       @in_solution[@pos_line] = @pos_column
-      copy_solution = Marshal.load(Marshal.dump(@in_solution))
-      in_solution_array = {}
-      @in_solution.each do |start_ver, finish_ver|
-        copy_solution.each do |copy_start, copy_finish|
-          if finish_ver == copy_start
-            in_solution_array[start_ver] = [start_ver, copy_start, copy_finish]
-          end
-        end
-        in_solution_array
-      end
-      in_solution_array.each do |key, value|
-        @result = @preparatory_path_service.calc_path_and_possible(value, @customers, @source_matrix)
-      end
-      puts(@result)
       if @in_solution.count > 1
         check_nonhamilton(@in_solution, @modified_matrix_with)
       end
       @modified_matrix = @modified_matrix_with
+      solution_obj_to_array(@in_solution)
     end
   end
 
@@ -175,11 +191,11 @@ class BrunchAndCut
     #with top
     @cost_of_path_with = solution_with_edge()
     select_optimal_way()
-
     if @modified_matrix.count > 1
       find_solution(@modified_matrix)
     else
       @in_solution[@modified_matrix.first[0]] = @modified_matrix[@modified_matrix.first[0]].first[0]
+      solution_obj_to_array(@in_solution)
     end
     @in_solution
   end
