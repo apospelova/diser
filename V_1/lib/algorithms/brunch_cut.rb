@@ -3,6 +3,7 @@ class BrunchAndCut
   def initialize(distance_matrix, customers)
     @customers = customers
     @source_matrix = Marshal.load(Marshal.dump(distance_matrix))
+    @size_start_matrix = @source_matrix.size
     @preparatory_path_service = PreparatoryPathService.new(@customers, @source_matrix)
     @min_limit = 0
     @in_solution = {}
@@ -41,7 +42,7 @@ class BrunchAndCut
         end
       end
     end
-    if Size_start_matrix > collection.size
+    if @size_start_matrix > collection.size
       matrix.each do |line_num, line|
         line.each do |column_num, value|
           copy_collection = Marshal.load(Marshal.dump(collection))
@@ -132,14 +133,11 @@ class BrunchAndCut
     vertexes = copy_solution.keys
     start = copy_solution.keys.first
     puts "@" * 100
-    puts "in_solution = #{in_solution}"
-    puts "in_solution_array  = #{in_solution_array}"
     current_post = start
     in_solution_array = {}
     in_solution_array[start] = []
     in_solution_array[start] << start
     copy_solution.each do |key, value|
-      puts "copy_solution[current_post] = #{copy_solution[current_post]}; current_post = #{current_post}"
       current_post = copy_solution[current_post]
       if !in_solution_array.include?(current_post)
         in_solution_array[start] << current_post
@@ -171,8 +169,15 @@ class BrunchAndCut
     end
   end
 
-  def find_solution(current_distance_matrix)
+  def count_length_of_path(path)
+    length = 0
+    path.each do |start_ver, finish_ver|
+      length += @source_matrix[start_ver][finish_ver][:distance]
+    end
+    length
+  end
 
+  def find_solution(current_distance_matrix)
     @modified_matrix = stage_2(current_distance_matrix)
     #stage 2(main) fines count
     @all_fines = []
@@ -198,6 +203,10 @@ class BrunchAndCut
       solution_obj_to_array(@in_solution)
     end
     @in_solution
+    length_of_solution = count_length_of_path(@in_solution)
+    puts("Solution: ", @in_solution)
+    puts("Length: ", length_of_solution)
+    puts(@source_matrix)
   end
 
 end
