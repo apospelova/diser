@@ -1,8 +1,7 @@
 require 'bundler'
 
 Bundler.require(:default)
-app_files = Dir['lib/**/*.rb']
-app_files.each { |f| require_relative f }
+require_relative './lib/tsp.rb'
 INFINITY = Float::INFINITY
-TravellingSalesmanProblem.new((1..100).to_a).solve
+TSP::TravellingSalesmanProblem.new((1..100).to_a).solve
 
