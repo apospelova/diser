@@ -1,6 +1,5 @@
 module TSP
   class BrunchAndCut
-
     def initialize(distance_matrix, customers)
       @customers = customers
       @source_matrix = Marshal.load(Marshal.dump(distance_matrix))
@@ -22,7 +21,8 @@ module TSP
     end
 
     def calc_cost_for_line_and_column(item)
-      min = item.min_by { |k, v| v[:distance] }[1][:distance]
+      min = item.min_by{|k, v| v[:distance]}[1][:distance]
+      min = 0 if min == INFINITY
       @min_limit = @min_limit + min
       new_item = []
       item.each do |el|
@@ -104,7 +104,8 @@ module TSP
           value = line[column_num][:distance]
           value_in_column << value
         end
-        @min_in_column = value_in_column.select(&:finite?).min || INFINITY
+        @min_in_column = value_in_column.min
+        @min_in_column = 0 if @min_in_column == INFINITY
         @min_limit += @min_in_column
         new_line_matrix.each do |key, line|
           line[column_num][:distance] -= @min_in_column
@@ -206,7 +207,7 @@ module TSP
       length_of_solution = count_length_of_path(@in_solution)
       puts("Solution: ", @in_solution)
       puts("Length: ", length_of_solution)
+      length_of_solution
     end
-
   end
 end
