@@ -150,7 +150,7 @@ module TSP
         start = vertexes[0]
       end
       in_solution_array.each do |key, value|
-        @result = @preparatory_path_service.calc_path_and_possible(value, @customers, @source_matrix)
+        @result = @preparatory_path_service.calc_path_and_possible(value, @source_matrix)
         puts(@result)
       end
     end
