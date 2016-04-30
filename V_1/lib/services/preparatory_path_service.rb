@@ -14,9 +14,9 @@ module TSP
       @ids_from = list_sort_by_from.map(&:id)
       @ids_end = list_sort_by_end.map(&:id)
       @ids_middle = list_sort_by_middle.map(&:id)
-      puts("From: #{@ids_from}")
-      puts("To: #{@ids_end}")
-      puts("Middle: #{@ids_middle}")
+      LOGGER.debug("From: #{@ids_from}")
+      LOGGER.debug("To: #{@ids_end}")
+      LOGGER.debug("Middle: #{@ids_middle}")
       @path = check_path(@ids_from, @ids_end)
     end
 
@@ -104,8 +104,8 @@ module TSP
       common_delay_time = 0
       longest_sequence_length = longest_sequence.length
       longest_sequence.each_with_index do |vertex, index|
-        puts "#" *100
-        puts "longest_sequence = #{longest_sequence}"
+        LOGGER.debug "#" *100
+        LOGGER.debug "longest_sequence = #{longest_sequence}"
         @customers.each do |customer|
           if vertex == customer.id
             if current_time == 0
@@ -113,20 +113,20 @@ module TSP
             else
               current_time = current_time
             end
-            puts("current_time: #{current_time}")
+            LOGGER.debug("current_time: #{current_time}")
             next_vertex = distance_matrix[vertex][longest_sequence[index+1]]
             if !next_vertex.nil?
-              puts("next_vertex: #{next_vertex}")
+              LOGGER.debug("next_vertex: #{next_vertex}")
               on_way = next_vertex[:distance]
               until_next_vertex = current_time + on_way
-              puts "on way = #{on_way}; until_next_vertex = #{until_next_vertex}"
+              LOGGER.debug "on way = #{on_way}; until_next_vertex = #{until_next_vertex}"
               if next_vertex[:to_customer][:time2] > until_next_vertex
                 delay_time = next_vertex[:to_customer][:time1] - until_next_vertex
                 way << vertex
                 time = count_delay_time(delay_time, common_delay_time, until_next_vertex, next_vertex[:to_customer][:time1])
                 current_time = time[0]
                 common_delay_time = time[1]
-                puts "delay_time = #{delay_time}; way = #{way}; time = #{time}"
+                LOGGER.debug "delay_time = #{delay_time}; way = #{way}; time = #{time}"
               else
                 raise NotPossibleWay
               end
@@ -138,13 +138,13 @@ module TSP
           current_time
         end
       end
-      puts(way.to_s)
+      LOGGER.debug(way.to_s)
       way
     rescue NotPossibleWay
-      puts("Not possible")
-      puts("Common delay time: ", common_delay_time)
-      puts("Possible way: ", way.to_s)
-      puts("Path length: ", INFINITY)
+      LOGGER.debug("Not possible")
+      LOGGER.debug("Common delay time: #{common_delay_time}")
+      LOGGER.debug("Possible way: #{way.to_s}")
+      LOGGER.debug("Path length: #{INFINITY}")
       []
     end
 

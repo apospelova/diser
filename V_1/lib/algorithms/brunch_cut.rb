@@ -134,7 +134,7 @@ module TSP
       copy_solution = Marshal.load(Marshal.dump(in_solution))
       vertexes = copy_solution.keys
       start = copy_solution.keys.first
-      puts "@" * 100
+      LOGGER.debug "@" * 100
       current_post = start
       in_solution_array = {}
       in_solution_array[start] = []
@@ -151,7 +151,7 @@ module TSP
       end
       in_solution_array.each do |key, value|
         @result = @preparatory_path_service.calc_path_and_possible(value, @source_matrix)
-        puts(@result)
+        LOGGER.debug(@result)
       end
     end
 
@@ -205,8 +205,8 @@ module TSP
         solution_obj_to_array(@in_solution)
       end
       length_of_solution = count_length_of_path(@in_solution)
-      puts("Solution: ", @in_solution)
-      puts("Length: ", length_of_solution)
+      LOGGER.debug("Solution: #{@in_solution}")
+      LOGGER.debug("Length: #{length_of_solution}")
       length_of_solution
     end
   end
