@@ -206,7 +206,6 @@ class BrunchAndCut
     length_of_solution = count_length_of_path(@in_solution)
     puts("Solution: ", @in_solution)
     puts("Length: ", length_of_solution)
-    puts(@source_matrix)
   end
 
 end
