@@ -12,4 +12,8 @@ class Customer
   def position
     @position ||= [x, y].freeze
   end
+
+  def middle_time
+    (time1 + time2) / 2
+  end
 end
