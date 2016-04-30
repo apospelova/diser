@@ -1,8 +1,5 @@
 module TSP
   class PreparatoryPathService
-    class NotPossibleWay < Exception;end
-
-
     def initialize(customers, distance_matrix)
       @customers = customers
       @distance_matrix = distance_matrix
@@ -140,12 +137,6 @@ module TSP
       end
       LOGGER.debug(way.to_s)
       way
-    rescue NotPossibleWay
-      LOGGER.debug("Not possible")
-      LOGGER.debug("Common delay time: #{common_delay_time}")
-      LOGGER.debug("Possible way: #{way.to_s}")
-      LOGGER.debug("Path length: #{INFINITY}")
-      []
     end
 
     def check_path(from_path, end_path)

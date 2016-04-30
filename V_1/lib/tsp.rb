@@ -7,8 +7,10 @@ require_relative 'services/travelling_salesman_problem'
 require 'logger'
 
 
-INFINITY = Float::INFINITY
 module TSP
   LOGGER = Logger.new(STDOUT)
   LOGGER.level = Logger::WARN
+  INFINITY = Float::INFINITY
+
+  class NotPossibleWay < Exception;end
 end

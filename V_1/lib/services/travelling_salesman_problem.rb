@@ -21,6 +21,9 @@ module TSP
       return INFINITY if prepare_matrix.empty?
       brunch_cut_with_tw = BrunchAndCut.new(prepare_matrix, @customers)
       @solution = brunch_cut_with_tw.find_solution(prepare_matrix)
+    rescue NotPossibleWay
+      LOGGER.debug("Not possible")
+      return INFINITY
     end
   end
 end

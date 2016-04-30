@@ -188,6 +188,9 @@ module TSP
           find_best_zero(line, line_num, el, column_num)
         end
       end
+      if @all_fines.empty?
+        raise NotPossibleWay
+      end
       element_with_max_fines = @all_fines.max_by {|fine| fine[:fines] }
       @pos_line = element_with_max_fines[:position][0]
       @pos_column = element_with_max_fines[:position][1]
