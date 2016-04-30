@@ -13,7 +13,7 @@ module TSP
     def solve
       prapare_path = TSP::PreparatoryPathService.new(@customers, @distance_matrix)
       prepare_matrix = prapare_path.find_new_matrix(@customers, @distance_matrix)
-      exit if prepare_matrix.empty?
+      return INFINITY if prepare_matrix.empty?
 
       brunch_cut = TSP::BrunchAndCut.new(prepare_matrix, @customers)
       @solution = brunch_cut.find_solution(prepare_matrix)

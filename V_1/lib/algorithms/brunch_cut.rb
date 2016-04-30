@@ -22,7 +22,7 @@ module TSP
     end
 
     def calc_cost_for_line_and_column(item)
-      min = item.min_by{|k, v| v[:distance]}[1][:distance]
+      min = item.min_by { |k, v| v[:distance] }[1][:distance]
       @min_limit = @min_limit + min
       new_item = []
       item.each do |el|
@@ -104,7 +104,7 @@ module TSP
           value = line[column_num][:distance]
           value_in_column << value
         end
-        @min_in_column = value_in_column.min
+        @min_in_column = value_in_column.select(&:finite?).min || INFINITY
         @min_limit += @min_in_column
         new_line_matrix.each do |key, line|
           line[column_num][:distance] -= @min_in_column
