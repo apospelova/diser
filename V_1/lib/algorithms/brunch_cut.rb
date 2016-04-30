@@ -22,6 +22,7 @@ class BrunchAndCut
 
   def calc_cost_for_line_and_column(item)
     min = item.min_by{|k, v| v[:distance]}[1][:distance]
+    min = 0 if min == INFINITY
     @min_limit = @min_limit + min
     new_item = []
     item.each do |el|
@@ -104,6 +105,7 @@ class BrunchAndCut
         value_in_column << value 
       end
       @min_in_column = value_in_column.min
+      @min_in_column = 0 if @min_in_column == INFINITY
       @min_limit += @min_in_column
       new_line_matrix.each do |key, line|
         line[column_num][:distance] -= @min_in_column
@@ -148,7 +150,7 @@ class BrunchAndCut
       start = vertexes[0]
     end
     in_solution_array.each do |key, value|
-      @result = @preparatory_path_service.calc_path_and_possible(value, @customers, @source_matrix)
+      @result = @preparatory_path_service.calc_path_and_possible(value, @source_matrix)
       puts(@result)
     end
   end
@@ -206,6 +208,7 @@ class BrunchAndCut
     length_of_solution = count_length_of_path(@in_solution)
     puts("Solution: ", @in_solution)
     puts("Length: ", length_of_solution)
+    length_of_solution
   end
 
 end
