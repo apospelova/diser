@@ -11,8 +11,13 @@ class PreparatoryPathService
     ids_end = []
     list_sort_by_from = customers.sort_by{|customer| customer.time1}
     list_sort_by_end = customers.sort_by{|customer| customer.time2}  
+    list_sort_by_middle = customers.sort_by{|customer| customer.middle_time}
     ids_from = list_sort_by_from.map(&:id)
     ids_end = list_sort_by_end.map(&:id)
+    ids_middle = list_sort_by_middle.map(&:id)
+    puts("From: #{ids_from}")
+    puts("To: #{ids_end}")
+    puts("Middle: #{ids_middle}")
     path = check_path(ids_from, ids_end)
     transform_matrix_tw = transorm_matrix_with_tw(distance_matrix, customers)
     longest_sequence = find_longest_sequence(path)
@@ -76,10 +81,12 @@ class PreparatoryPathService
           if current_time == 0 
             current_time = customer.time1 + customer.service_time
           else
-            current_time = current_time + customer.service_time
+            current_time = current_time 
           end
+          puts("current_time: #{current_time}")
           next_vertex = distance_matrix[vertex][longest_sequence[index+1]]
           if !next_vertex.nil?
+            puts("next_vertex: #{next_vertex}")
             on_way = next_vertex[:distance] 
             until_next_vertex = current_time + on_way
             puts "on way = #{on_way}; until_next_vertex = #{until_next_vertex}"

@@ -1,4 +1,5 @@
 class TravellingSalesmanProblem
+  require 'pp'
 
   def initialize(customer_ids)
     customer_parser = CustomerParserService.new(File.join(Dir.pwd, 'data/rc101.csv'))
@@ -13,7 +14,7 @@ end
     prapare_path = PreparatoryPathService.new(@customers, @distance_matrix)
     prepare_matrix = prapare_path.find_new_matrix(@customers, @distance_matrix)
     exit if prepare_matrix.empty?
-
+    
     brunch_cut = BrunchAndCut.new(prepare_matrix, @customers)
     @solution = brunch_cut.find_solution(prepare_matrix)
   end
